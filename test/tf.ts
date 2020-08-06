@@ -30,7 +30,7 @@ const moduleCfg: ModuleConfig = {
 };
 const docker = new Docker();
 
-async function checkName(name: string): Promise<void> {
+async function checkName(name: string, present = true): Promise<void> {
     const data = await docker.command('ps');
     let found = false;
     data['containerList'].forEach(container => {
@@ -38,7 +38,13 @@ async function checkName(name: string): Promise<void> {
             found = true;
         }
     });
-    found.should.be.true;
+    found.should.eq(present);
+}
+
+async function checkDestroy(subject: Terraform, name = 'test-tf'): Promise<void> {
+    await subject.destroy(moduleCfg);
+
+    await checkName(name, false);
 }
 
 async function checkInstall(subject: Terraform, name = 'test-tf'): Promise<void> {
@@ -73,13 +79,18 @@ describe('Terraform', () => {
     });
 
     describe('constructor', () => {
-        describe('apply/destroy', () => {
+        describe('apply/destroy no values', () => {
             afterEach(async () => {
-                await subject.destroy(moduleCfg);
+                await checkDestroy(subject);
             });
 
             it('should apply a module', async () => {
                 await checkInstall(subject);
+            });
+        });
+        describe('apply/destroy values', () => {
+            afterEach(async () => {
+                await checkDestroy(subject, 'test-tf-with-values');
             });
 
             it('should allow to pass values', async () => {
@@ -91,7 +102,7 @@ describe('Terraform', () => {
                 const result = await subject.plan(moduleCfg);
 
                 result.resource_changes.forEach((resourceChange) => {
-                    resourceChange.change[0].should.eq(TerraformChangeAction.Create);
+                    resourceChange.change.actions[0].should.eq(TerraformChangeAction.Create);
                 })
             });
         });
