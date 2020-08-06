@@ -5,5 +5,5 @@ dist/
 helmfile.d/.cache
 helmfile.d/.config
 helmfile.d/.kube
-test/files/modules/test/.terraform
-test/files/modules/test/*tfstate*
+test/modules/test/.terraform
+test/modules/test/*tfstate*
