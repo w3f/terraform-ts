@@ -101,6 +101,8 @@ export class Terraform implements TerraformManager {
                 break;
         }
 
+        options.push(moduleCfg.moduleLocation)
+
         try {
             await this.cmd.exec(`${this.binaryPath}`, ...options);
         } finally {
