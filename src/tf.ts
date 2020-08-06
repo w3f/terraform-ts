@@ -50,61 +50,63 @@ export class Terraform implements TerraformManager {
         this.cmd.setOptions({ verbose: true });
     }
 
-    async init(moduleCfg: ModuleConfig): Promise<void> {
-        await this.commonActions(TerraformAction.Init, moduleCfg);
-    }
-
     async apply(moduleCfg: ModuleConfig): Promise<void> {
+        await this.commonActions(TerraformAction.Init, moduleCfg);
         await this.commonActions(TerraformAction.Apply, moduleCfg);
     }
 
     async destroy(moduleCfg: ModuleConfig): Promise<void> {
+        await this.commonActions(TerraformAction.Init, moduleCfg);
         await this.commonActions(TerraformAction.Destroy, moduleCfg);
     }
 
     async plan(moduleCfg: ModuleConfig): Promise<object> {
+        await this.commonActions(TerraformAction.Init, moduleCfg);
         return this.commonActions(TerraformAction.Plan, moduleCfg);
     }
 
     private async commonActions(action: TerraformAction, moduleCfg: ModuleConfig): Promise<object> {
-        let valuesFile = '';
+        let varsFile = '';
         let planFile = '';
         let options: Array<string> = [action];
         switch (action) {
             case TerraformAction.Apply:
             case TerraformAction.Destroy:
                 options.push('-auto-approve');
+                if (moduleCfg.vars) {
+                    varsFile = this.writeIniFile(moduleCfg.vars);
+
+                    options.push('-var-file', varsFile);
+                }
                 break;
             case TerraformAction.Plan:
                 const tmpobj = tmp.fileSync();
                 planFile = tmpobj.name;
 
                 options.push(`-out`, planFile);
+                if (moduleCfg.vars) {
+                    varsFile = this.writeIniFile(moduleCfg.vars);
+
+                    options.push('-var-file', varsFile);
+                }
+                break;
+            case TerraformAction.Init:
+                if (moduleCfg.backendVars) {
+                    varsFile = this.writeIniFile(moduleCfg.backendVars);
+
+                    options.push('-backend-config', varsFile);
+                }
                 break;
         }
 
-        if (moduleCfg.values) {
-            const tmpobj = tmp.fileSync();
-            valuesFile = tmpobj.name;
-
-            fs.writeFileSync(valuesFile, ini.stringify(moduleCfg.values));
-
-            let optionName = '-var-file';
-            if (action === TerraformAction.Init) {
-                optionName = '-backend-config';
-            }
-            options.push(optionName, valuesFile);
-        }
-
-        let result;
         try {
-            result = await this.cmd.exec(`${this.binaryPath}`, ...options);
-        } catch (e) {
-            if (valuesFile) {
-                fs.unlink(valuesFile);
+            await this.cmd.exec(`${this.binaryPath}`, ...options);
+        } finally {
+            if (varsFile) {
+                fs.unlink(varsFile);
             }
-            throw (e);
         }
+
         if (action === TerraformAction.Plan) {
             const showOptions = [
                 'show',
@@ -112,10 +114,22 @@ export class Terraform implements TerraformManager {
                 planFile
             ];
 
-            const output = await this.cmd.exec(`${this.binaryPath}`, ...showOptions);
-            fs.unlink(planFile);
-            return JSON.parse(output as string);
+            let output = '';
+            try {
+                output = await this.cmd.exec(`${this.binaryPath}`, ...showOptions) as string;
+            } finally {
+                fs.unlink(planFile);
+            }
+            return JSON.parse(output);
         }
-        return result;
+    }
+
+    private writeIniFile(values: any): string {
+        const tmpobj = tmp.fileSync();
+        const file = tmpobj.name;
+
+        fs.writeFileSync(file, ini.stringify(values));
+
+        return file;
     }
 }
