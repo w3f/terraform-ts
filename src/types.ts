@@ -9,13 +9,13 @@ export interface TerraformConfig {
 
 export interface ModuleConfig {
     moduleLocation: string;
-    values?: any;
+    vars?: any;
+    backendVars?: any;
 }
 
 export interface TerraformManager {
     apply(moduleCfg: ModuleConfig): Promise<void>;
     destroy(moduleCfg: ModuleConfig): Promise<void>;
-    init(moduleCfg: ModuleConfig): Promise<void>;
     plan(moduleCfg: ModuleConfig): Promise<object>;
 }
 
