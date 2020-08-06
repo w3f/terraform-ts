@@ -12,9 +12,16 @@ export interface ModuleConfig {
     values?: any;
 }
 
-export interface HelmManager {
+export interface TerraformManager {
     apply(moduleCfg: ModuleConfig): Promise<void>;
     destroy(moduleCfg: ModuleConfig): Promise<void>;
     init(moduleCfg: ModuleConfig): Promise<void>;
-    plan(moduleCfg: ModuleConfig): Promise<void>;
+    plan(moduleCfg: ModuleConfig): Promise<object>;
+}
+
+export enum TerraformAction {
+    Init = 'init',
+    Apply = 'apply',
+    Destroy = 'destroy',
+    Plan = 'plan'
 }
