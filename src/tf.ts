@@ -10,6 +10,7 @@ import {
     TerraformConfig,
     TerraformAction,
     ModuleConfig,
+    TerraformPlanRepresentation
 } from './types';
 
 const tfVersion = '0.12.29';
@@ -60,12 +61,12 @@ export class Terraform implements TerraformManager {
         await this.commonActions(TerraformAction.Destroy, moduleCfg);
     }
 
-    async plan(moduleCfg: ModuleConfig): Promise<object> {
+    async plan(moduleCfg: ModuleConfig): Promise<TerraformPlanRepresentation> {
         await this.commonActions(TerraformAction.Init, moduleCfg);
         return this.commonActions(TerraformAction.Plan, moduleCfg);
     }
 
-    private async commonActions(action: TerraformAction, moduleCfg: ModuleConfig): Promise<object> {
+    private async commonActions(action: TerraformAction, moduleCfg: ModuleConfig): Promise<TerraformPlanRepresentation> {
         let varsFile = '';
         let planFile = '';
         const options: Array<string> = [action];
@@ -121,7 +122,7 @@ export class Terraform implements TerraformManager {
             } finally {
                 fs.unlink(planFile);
             }
-            return JSON.parse(output);
+            return JSON.parse(output) as TerraformPlanRepresentation;
         }
     }
 

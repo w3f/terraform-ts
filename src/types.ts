@@ -16,7 +16,7 @@ export interface ModuleConfig {
 export interface TerraformManager {
     apply(moduleCfg: ModuleConfig): Promise<void>;
     destroy(moduleCfg: ModuleConfig): Promise<void>;
-    plan(moduleCfg: ModuleConfig): Promise<object>;
+    plan(moduleCfg: ModuleConfig): Promise<TerraformPlanRepresentation>;
 }
 
 export enum TerraformAction {
@@ -24,4 +24,24 @@ export enum TerraformAction {
     Apply = 'apply',
     Destroy = 'destroy',
     Plan = 'plan'
+}
+
+export enum TerraformChangeAction {
+    NoOp = 'no-op',
+    Create = 'create',
+    Read = 'read',
+    Update = 'update',
+    Delete = 'delete'
+}
+
+export interface TerraformChangeRepresentation {
+    actions: Array<TerraformChangeAction>;
+}
+
+export interface TerraformResourceChange {
+    change: TerraformChangeRepresentation;
+}
+
+export interface TerraformPlanRepresentation {
+    resource_changes: Array<TerraformResourceChange>;
 }
