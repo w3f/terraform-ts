@@ -68,7 +68,7 @@ export class Terraform implements TerraformManager {
     private async commonActions(action: TerraformAction, moduleCfg: ModuleConfig): Promise<object> {
         let varsFile = '';
         let planFile = '';
-        let options: Array<string> = [action];
+        const options: Array<string> = [action];
         switch (action) {
             case TerraformAction.Apply:
             case TerraformAction.Destroy:
@@ -79,7 +79,7 @@ export class Terraform implements TerraformManager {
                     options.push('-var-file', varsFile);
                 }
                 break;
-            case TerraformAction.Plan:
+            case TerraformAction.Plan: {
                 const tmpobj = tmp.fileSync();
                 planFile = tmpobj.name;
 
@@ -90,6 +90,7 @@ export class Terraform implements TerraformManager {
                     options.push('-var-file', varsFile);
                 }
                 break;
+            }
             case TerraformAction.Init:
                 if (moduleCfg.backendVars) {
                     varsFile = this.writeIniFile(moduleCfg.backendVars);
