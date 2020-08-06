@@ -1,8 +1,5 @@
-import * as fs from 'fs-extra';
 import { should } from 'chai';
 import * as path from 'path';
-import * as tmp from 'tmp';
-import * as yaml from 'js-yaml';
 import { Cmd } from '@w3f/cmd';
 import { Components } from '@w3f/components';
 import { createLogger } from '@w3f/logger';
@@ -30,7 +27,7 @@ const moduleCfg: ModuleConfig = {
 
 
 async function checkInstall(subject: Terraform): Promise<void> {
-    await subject.install(moduleCfg);
+    await subject.apply(moduleCfg);
 
     // check install
 }
@@ -38,14 +35,14 @@ async function checkInstall(subject: Terraform): Promise<void> {
 async function checkInstallWithValues(subject: Terraform): Promise<void> {
     const replicas = 5;
 
-    const values = { replicas };
+    const vars = { replicas };
 
     const moduleCfg: ModuleConfig = {
         moduleLocation,
-        values
+        vars
     };
 
-    await subject.install(moduleCfg);
+    await subject.apply(moduleCfg);
 
     // check install
 }
