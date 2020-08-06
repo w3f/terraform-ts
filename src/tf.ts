@@ -1,9 +1,10 @@
 import fs from 'fs-extra';
-import ini from 'ini';
+import path from 'path';
 import tmp from 'tmp';
 import { CmdManager, Cmd } from '@w3f/cmd';
 import { Components } from '@w3f/components';
 import { Logger, createLogger } from '@w3f/logger';
+import { Template } from '@w3f/template';
 
 import {
     TerraformManager,
@@ -12,6 +13,7 @@ import {
     ModuleConfig,
     TerraformPlanRepresentation
 } from './types';
+
 
 const tfVersion = '0.12.29';
 
@@ -128,12 +130,19 @@ export class Terraform implements TerraformManager {
         }
     }
 
-    private writeIniFile(values: any): string {
+    private writeIniFile(values: object): string {
         const tmpobj = tmp.fileSync();
-        const file = tmpobj.name;
+        const target = tmpobj.name;
+        const source = path.join(__dirname, 'tfvars.tpl');
 
-        fs.writeFileSync(file, ini.stringify(values));
+        const data = {};
+        for (const [key, value] of Object.entries(values)) {
+            data[key] = value;
+        }
 
-        return file;
+        const tpl = new Template();
+        tpl.create(source, target, data);
+
+        return target;
     }
 }
