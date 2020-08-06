@@ -5,10 +5,10 @@ provider "docker" {
 
 # Create a container
 resource "docker_container" "foo" {
-  image = docker_image.ubuntu.latest
-  name  = "test"
+  image = docker_image.image.latest
+  name  = var.name
 }
 
-resource "docker_image" "ubuntu" {
+resource "docker_image" "image" {
   name = "nginx:latest"
 }

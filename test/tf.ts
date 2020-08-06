@@ -1,11 +1,15 @@
 import { should } from 'chai';
+import { Docker } from 'docker-cli-js';
 import * as path from 'path';
 import { Cmd } from '@w3f/cmd';
 import { Components } from '@w3f/components';
 import { createLogger } from '@w3f/logger';
 
 import { Terraform } from '../src/index';
-import { ModuleConfig } from '../src/types';
+import {
+    ModuleConfig,
+    TerraformChangeAction
+} from '../src/types';
 
 should();
 
@@ -24,18 +28,27 @@ const moduleLocation = path.join(__dirname, 'modules', 'test');
 const moduleCfg: ModuleConfig = {
     moduleLocation
 };
+const docker = new Docker();
 
-
-async function checkInstall(subject: Terraform): Promise<void> {
-    await subject.apply(moduleCfg);
-
-    // check install
+async function checkName(name: string): Promise<void> {
+    const data = await docker.command('ps');
+    let found = false;
+    data['containerList'].forEach(container => {
+        if (container['names'] === name) {
+            found = true;
+        }
+    });
+    found.should.be.true;
 }
 
-async function checkInstallWithValues(subject: Terraform): Promise<void> {
-    const replicas = 5;
+async function checkInstall(subject: Terraform, name = 'test-tf'): Promise<void> {
+    await subject.apply(moduleCfg);
 
-    const vars = { replicas };
+    await checkName(name);
+}
+
+async function checkInstallWithValues(subject: Terraform, name: string): Promise<void> {
+    const vars = { name };
 
     const moduleCfg: ModuleConfig = {
         moduleLocation,
@@ -44,7 +57,7 @@ async function checkInstallWithValues(subject: Terraform): Promise<void> {
 
     await subject.apply(moduleCfg);
 
-    // check install
+    await checkName(name);
 }
 
 describe('Terraform', () => {
@@ -70,14 +83,16 @@ describe('Terraform', () => {
             });
 
             it('should allow to pass values', async () => {
-                await checkInstallWithValues(subject);
+                await checkInstallWithValues(subject, 'test-tf-with-values');
             });
         });
         describe('plan', () => {
             it('should return a json wih the plan output', async () => {
                 const result = await subject.plan(moduleCfg);
 
-                result.metadata.labels.release.should.eq(name);
+                result.resource_changes.forEach((resourceChange) => {
+                    resourceChange.change[0].should.eq(TerraformChangeAction.Create);
+                })
             });
         });
     });
@@ -96,7 +111,7 @@ describe('Terraform', () => {
             await checkInstall(subjectFromFactory);
         });
         it('should allow to pass values', async () => {
-            await checkInstallWithValues(subjectFromFactory);
+            await checkInstallWithValues(subjectFromFactory, 'test-tf-with-values');
         });
     });
 
