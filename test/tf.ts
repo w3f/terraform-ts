@@ -20,6 +20,7 @@ const cmCfg = {
 };
 const cm = new Components('tf-test', cmCfg, logger);
 const cmd = new Cmd(logger);
+const valuesName = 'test-tf-with-values';
 
 let subject: Terraform;
 let subjectFromFactory: Terraform;
@@ -30,11 +31,11 @@ const moduleCfg: ModuleConfig = {
 };
 const docker = new Docker();
 
-async function checkName(name: string, present = true): Promise<void> {
+async function checkField(key: string, value: string, present = true): Promise<void> {
     const data = await docker.command('ps');
     let found = false;
     data['containerList'].forEach(container => {
-        if (container['names'] === name) {
+        if (container[key] === value) {
             found = true;
         }
     });
@@ -44,18 +45,16 @@ async function checkName(name: string, present = true): Promise<void> {
 async function checkDestroy(subject: Terraform, name = 'test-tf'): Promise<void> {
     await subject.destroy(moduleCfg);
 
-    await checkName(name, false);
+    await checkField('name', name, false);
 }
 
 async function checkInstall(subject: Terraform, name = 'test-tf'): Promise<void> {
     await subject.apply(moduleCfg);
 
-    await checkName(name);
+    await checkField('name', name);
 }
 
-async function checkInstallWithValues(subject: Terraform, name: string): Promise<void> {
-    const vars = { name };
-
+async function checkInstallWithValues(subject: Terraform, vars: object): Promise<void> {
     const moduleCfg: ModuleConfig = {
         moduleLocation,
         vars
@@ -63,7 +62,7 @@ async function checkInstallWithValues(subject: Terraform, name: string): Promise
 
     await subject.apply(moduleCfg);
 
-    await checkName(name);
+    await checkField('name', vars['name']);
 }
 
 describe('Terraform', () => {
@@ -90,11 +89,11 @@ describe('Terraform', () => {
         });
         describe('apply/destroy values', () => {
             afterEach(async () => {
-                await checkDestroy(subject, 'test-tf-with-values');
+                await checkDestroy(subject, valuesName);
             });
 
             it('should allow to pass values', async () => {
-                await checkInstallWithValues(subject, 'test-tf-with-values');
+                await checkInstallWithValues(subject, { name: valuesName });
             });
         });
         describe('plan', () => {
@@ -122,7 +121,7 @@ describe('Terraform', () => {
             await checkInstall(subjectFromFactory);
         });
         it('should allow to pass values', async () => {
-            await checkInstallWithValues(subjectFromFactory, 'test-tf-with-values');
+            await checkInstallWithValues(subjectFromFactory, { name: valuesName });
         });
     });
 
