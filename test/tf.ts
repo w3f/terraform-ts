@@ -32,7 +32,12 @@ const moduleCfg: ModuleConfig = {
 const docker = new Docker();
 
 async function checkField(key: string, value: string, present = true): Promise<void> {
-    const data = await docker.command(`-H ${process.env['DOCKER_HOST']} ps`);
+    let dockerCmd = '';
+    const dockerHost = process.env['DOCKER_HOST'];
+    if (dockerHost) {
+        dockerCmd = `-H ${dockerHost}`;
+    }
+    const data = await docker.command(`${dockerCmd} ps`);
     let found = false;
     data['containerList'].forEach(container => {
         if (container[key] === value) {
