@@ -45,13 +45,13 @@ async function checkField(key: string, value: string, present = true): Promise<v
 async function checkDestroy(subject: Terraform, name = 'test-tf'): Promise<void> {
     await subject.destroy(moduleCfg);
 
-    await checkField('name', name, false);
+    await checkField('names', name, false);
 }
 
 async function checkInstall(subject: Terraform, name = 'test-tf'): Promise<void> {
     await subject.apply(moduleCfg);
 
-    await checkField('name', name);
+    await checkField('names', name);
 }
 
 async function checkInstallWithValues(subject: Terraform, vars: object): Promise<void> {
@@ -62,7 +62,7 @@ async function checkInstallWithValues(subject: Terraform, vars: object): Promise
 
     await subject.apply(moduleCfg);
 
-    await checkField('name', vars['name']);
+    await checkField('names', vars['name']);
 }
 
 describe('Terraform', () => {
@@ -102,7 +102,17 @@ describe('Terraform', () => {
 
                 result.resource_changes.forEach((resourceChange) => {
                     resourceChange.change.actions[0].should.eq(TerraformChangeAction.Create);
-                })
+                });
+            });
+            it('after apply, the plan should contain no-ops', async () => {
+                await checkInstall(subject);
+
+                const result = await subject.plan(moduleCfg);
+
+                result.resource_changes.forEach((resourceChange) => {
+                    resourceChange.change.actions[0].should.eq(TerraformChangeAction.NoOp);
+                });
+                await checkDestroy(subject, valuesName);
             });
         });
     });
