@@ -32,14 +32,6 @@
     enabled "2.0.x"
     kuler "^2.0.0"
 
-"@types/blue-tape@^0.1.30":
-  version "0.1.33"
-  resolved "https://registry.yarnpkg.com/@types/blue-tape/-/blue-tape-0.1.33.tgz#61796d4f0455a00a61be59e52288cb3428209804"
-  integrity sha512-l5cQcLM3aPh55bBQ4geWQ8hZ4Ew+s4RvyhMaBpgW3aJ2HUfRgwd8ENKrk/utC4Hz1dJAiehyIa4vN6emxBMaog==
-  dependencies:
-    "@types/node" "*"
-    "@types/tape" "*"
-
 "@types/chai-as-promised@^7.1.2":
   version "7.1.3"
   resolved "https://registry.yarnpkg.com/@types/chai-as-promised/-/chai-as-promised-7.1.3.tgz#779166b90fda611963a3adbfd00b339d03b747bd"
@@ -74,11 +66,6 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.5.tgz#dcce4430e64b443ba8945f0290fb564ad5bac6dd"
   integrity sha512-7+2BITlgjgDhH0vvwZU/HZJVyk+2XUlvxXe8dFMedNX/aMkaOq++rMAFXc0tM7ij15QaWlbdQASBR9dihi+bDQ==
 
-"@types/lodash@4.14.119":
-  version "4.14.119"
-  resolved "https://registry.yarnpkg.com/@types/lodash/-/lodash-4.14.119.tgz#be847e5f4bc3e35e46d041c394ead8b603ad8b39"
-  integrity sha512-Z3TNyBL8Vd/M9D9Ms2S3LmFq2sSMzahodD6rCS9V2N44HUMINb75jNkSuwAx7eo2ufqTdfOdtGQpNbieUjPQmw==
-
 "@types/mocha@^7.0.1":
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/@types/mocha/-/mocha-7.0.2.tgz#b17f16cf933597e10d6d78eae3251e692ce8b0ce"
@@ -105,13 +92,6 @@
   version "6.0.1"
   resolved "https://registry.yarnpkg.com/@types/sinonjs__fake-timers/-/sinonjs__fake-timers-6.0.1.tgz#681df970358c82836b42f989188d133e218c458e"
   integrity sha512-yYezQwGWty8ziyYLdZjwxyMb0CZR49h8JALHGrxjQHWlqGgc8kLdHEgWrgL0uZ29DMvEVBDnHU2Wg36zKSIUtA==
-
-"@types/tape@*":
-  version "4.13.0"
-  resolved "https://registry.yarnpkg.com/@types/tape/-/tape-4.13.0.tgz#7a3f656f78a7eeee962fe4c8bedf016061e2d0ea"
-  integrity sha512-0V8cKowBdsiA9nbxAg7531sF2cdPZNiUogcfIUeUGm+bejUBE/bvibz3rH36iQP9bQjO/sOzFwU97/uC5mCyoA==
-  dependencies:
-    "@types/node" "*"
 
 "@types/tmp@^0.1.0":
   version "0.1.0"
@@ -430,15 +410,6 @@ cli-cursor@^3.1.0:
   dependencies:
     restore-cursor "^3.1.0"
 
-cli-table-2-json@1.0.13:
-  version "1.0.13"
-  resolved "https://registry.yarnpkg.com/cli-table-2-json/-/cli-table-2-json-1.0.13.tgz#33d5be36851477854b004356197a6409c7370aea"
-  integrity sha512-CpUj9dubfuIZSEezwUPycAJqM2dlATyyRUyBkfGeK2KNfrqK3XrdaBohMt0XlkEvsZyDfUEmPWCNvUO+a/7Wsw==
-  dependencies:
-    "@types/blue-tape" "^0.1.30"
-    "@types/lodash" "4.14.119"
-    lodash "^4.17.15"
-
 cli-width@^3.0.0:
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/cli-width/-/cli-width-3.0.0.tgz#a2f48437a2caa9a22436e794bf071ec9e61cedf6"
@@ -581,24 +552,6 @@ diff@^4.0.1:
   version "4.0.2"
   resolved "https://registry.yarnpkg.com/diff/-/diff-4.0.2.tgz#60f3aecb89d5fae520c11aa19efc2bb982aade7d"
   integrity sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==
-
-docker-cli-js@^2.7.1:
-  version "2.7.1"
-  resolved "https://registry.yarnpkg.com/docker-cli-js/-/docker-cli-js-2.7.1.tgz#abb0f8337681c76f0b196635629bfe87c2d75b0a"
-  integrity sha512-x0MfLInVShMHXVg1WH1fA2KFdtLgpw1qoBOZrcU4pGU1wH/7YvrMpLFLH/nXdLUdMy+YEtBH4IiYbBZ/aKvPwA==
-  dependencies:
-    cli-table-2-json "1.0.13"
-    dockermachine-cli-js "3.0.5"
-    lodash.snakecase "^4.1.1"
-    nodeify-ts "1.0.6"
-
-dockermachine-cli-js@3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/dockermachine-cli-js/-/dockermachine-cli-js-3.0.5.tgz#7e7aa37adba885572e6b59ed9050fe347e558227"
-  integrity sha512-oV9RRKGvWrvsGl8JW9TWKpjBJVGxn/1qMvhqwPJiOPfRES0+lrq/Q8Wzixb6qinuXPVBhlWqhXb/Oxrh6Vuf/g==
-  dependencies:
-    cli-table-2-json "1.0.13"
-    nodeify-ts "1.0.6"
 
 doctrine@^3.0.0:
   version "3.0.0"
@@ -1184,11 +1137,6 @@ locate-path@^3.0.0:
     p-locate "^3.0.0"
     path-exists "^3.0.0"
 
-lodash.snakecase@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.yarnpkg.com/lodash.snakecase/-/lodash.snakecase-4.1.1.tgz#39d714a35357147837aefd64b5dcbb16becd8f8d"
-  integrity sha1-OdcUo1NXFHg3rv1ktdy7Fr7Nj40=
-
 lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.16:
   version "4.17.19"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
@@ -1328,11 +1276,6 @@ node-environment-flags@1.0.6:
   dependencies:
     object.getownpropertydescriptors "^2.0.3"
     semver "^5.7.0"
-
-nodeify-ts@1.0.6:
-  version "1.0.6"
-  resolved "https://registry.yarnpkg.com/nodeify-ts/-/nodeify-ts-1.0.6.tgz#ceef172c4fad1a45a1ae60a31c7e295150b5e221"
-  integrity sha512-jq+8sqVG1aLqy5maMTceL8NUJ1CvarWztlxvrYh3G0aao9BsVeoVmVedUnrUSBLetP7oLIAJrPrw4+iIo7v3GA==
 
 normalize-path@^3.0.0, normalize-path@~3.0.0:
   version "3.0.0"

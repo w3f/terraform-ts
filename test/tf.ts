@@ -1,7 +1,6 @@
 import { should } from 'chai';
-import { Docker } from 'docker-cli-js';
 import * as path from 'path';
-import { Cmd } from '@w3f/cmd';
+import { Cmd, CmdOptions } from '@w3f/cmd';
 import { Components } from '@w3f/components';
 import { createLogger } from '@w3f/logger';
 
@@ -29,18 +28,27 @@ const moduleLocation = path.join(__dirname, 'modules', 'test');
 const moduleCfg: ModuleConfig = {
     moduleLocation
 };
-const docker = new Docker();
 
 async function checkField(key: string, value: string, present = true): Promise<void> {
-    let dockerCmd = '';
-    const dockerHost = process.env['DOCKER_HOST'];
-    if (dockerHost) {
-        dockerCmd = `-H ${dockerHost}`;
-    }
-    const data = await docker.command(`${dockerCmd} ps`);
+    const cmd = new Cmd(logger);
+    const options: CmdOptions = {
+        verbose: true,
+        shell: true
+    };
+    options.env = {};
+    const dockerEnvVars = ['DOCKER_HOST', 'DOCKER_TLS_VERIFY', 'DOCKER_CERT_PATH', 'DOCKER_MACHINE_NAME'];
+    dockerEnvVars.forEach(dockerEnvVar => {
+        if (process.env[dockerEnvVar]) {
+            options.env[dockerEnvVar] = process.env[dockerEnvVar];
+        }
+    });
+    cmd.setOptions(options);
+
+    const result = await cmd.exec('docker', 'ps') as string;
+
     let found = false;
-    data['containerList'].forEach(container => {
-        if (container[key] === value) {
+    result.split("\n").forEach(line => {
+        if (line.includes(value)) {
             found = true;
         }
     });
