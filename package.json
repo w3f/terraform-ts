@@ -1,6 +1,6 @@
 {
   "name": "@w3f/terraform",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Terraform manager",
   "repository": "git@github.com:w3f/helm-ts.git",
   "author": "W3F Infrastructure Team <devops@web3.foundation>",
