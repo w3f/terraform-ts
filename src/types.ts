@@ -7,6 +7,10 @@ export interface TerraformConfig {
     logger: Logger;
 }
 
+export interface ModuleMap {
+    [location: string]: string;
+}
+
 export interface ModuleConfig {
     moduleLocation: string;
     vars?: any;
@@ -17,13 +21,15 @@ export interface TerraformManager {
     apply(moduleCfg: ModuleConfig): Promise<void>;
     destroy(moduleCfg: ModuleConfig): Promise<void>;
     plan(moduleCfg: ModuleConfig): Promise<TerraformPlanRepresentation>;
+    output(moduleCfg: ModuleConfig, name: string): Promise<any>;
 }
 
 export enum TerraformAction {
     Init = 'init',
     Apply = 'apply',
     Destroy = 'destroy',
-    Plan = 'plan'
+    Plan = 'plan',
+    Output = 'output'
 }
 
 export enum TerraformChangeAction {

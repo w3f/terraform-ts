@@ -9,6 +9,7 @@ import {
     TerraformConfig,
     TerraformAction,
     ModuleConfig,
+    ModuleMap,
     TerraformPlanRepresentation
 } from './types';
 
@@ -19,6 +20,7 @@ export class Terraform implements TerraformManager {
     private readonly binaryPath: string;
     private readonly cmd: CmdManager;
     private readonly logger: Logger
+    private readonly moduleMap: ModuleMap = {};
 
     static async createBare(): Promise<Terraform> {
         const logger = createLogger();
@@ -47,28 +49,54 @@ export class Terraform implements TerraformManager {
         this.binaryPath = tfCfg.binaryPath;
         this.cmd = tfCfg.cmd;
         this.logger = tfCfg.logger;
+    }
 
-        this.cmd.setOptions({ verbose: true });
+    async initialize(moduleCfg: ModuleConfig): Promise<void> {
+        if (!this.moduleMap[moduleCfg.moduleLocation]) {
+            const dir = tmp.dirSync();
+            this.moduleMap[moduleCfg.moduleLocation] = dir.name;
+        }
+        await this.commonActions(TerraformAction.Init, moduleCfg);
     }
 
     async apply(moduleCfg: ModuleConfig): Promise<void> {
-        await this.commonActions(TerraformAction.Init, moduleCfg);
+        await this.initialize(moduleCfg);
+
         await this.commonActions(TerraformAction.Apply, moduleCfg);
     }
 
     async destroy(moduleCfg: ModuleConfig): Promise<void> {
-        await this.commonActions(TerraformAction.Init, moduleCfg);
+        await this.initialize(moduleCfg);
+
         await this.commonActions(TerraformAction.Destroy, moduleCfg);
     }
 
     async plan(moduleCfg: ModuleConfig): Promise<TerraformPlanRepresentation> {
-        await this.commonActions(TerraformAction.Init, moduleCfg);
+        await this.initialize(moduleCfg);
+
         return this.commonActions(TerraformAction.Plan, moduleCfg);
     }
 
-    private async commonActions(action: TerraformAction, moduleCfg: ModuleConfig): Promise<TerraformPlanRepresentation> {
+    async output(moduleCfg: ModuleConfig, name: string): Promise<any> {
+        await this.initialize(moduleCfg);
+
+        const result = await this.commonActions(TerraformAction.Output, moduleCfg) as string;
+        const output = JSON.parse(result);
+        if (!(name in output)) {
+            throw new Error(`${name} output not found in terraform state`);
+        }
+        return output[name]['value'];
+    }
+
+    private async commonActions(action: TerraformAction, moduleCfg: ModuleConfig): Promise<any> {
         let varsFile = '';
         let planFile = '';
+
+        this.cmd.setOptions({
+            verbose: true,
+            cwd: this.moduleMap[moduleCfg.moduleLocation]
+        });
+
         const options: Array<string> = [action];
         switch (action) {
             case TerraformAction.Apply:
@@ -99,12 +127,18 @@ export class Terraform implements TerraformManager {
                     options.push('-backend-config', varsFile);
                 }
                 break;
+            case TerraformAction.Output: {
+                options.push('-json');
+            }
         }
 
-        options.push(moduleCfg.moduleLocation)
+        if (action !== TerraformAction.Output) {
+            options.push(moduleCfg.moduleLocation);
+        }
 
+        let output = '';
         try {
-            await this.cmd.exec(`${this.binaryPath}`, ...options);
+            output = await this.cmd.exec(`${this.binaryPath}`, ...options) as string;
         } finally {
             if (varsFile) {
                 fs.unlink(varsFile);
@@ -118,7 +152,6 @@ export class Terraform implements TerraformManager {
                 planFile
             ];
 
-            let output = '';
             try {
                 output = await this.cmd.exec(`${this.binaryPath}`, ...showOptions) as string;
             } finally {
@@ -126,6 +159,7 @@ export class Terraform implements TerraformManager {
             }
             return JSON.parse(output) as TerraformPlanRepresentation;
         }
+        return output;
     }
 
     private writeIniFile(values: object): string {
