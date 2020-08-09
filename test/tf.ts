@@ -128,8 +128,23 @@ describe('Terraform', () => {
                 await checkDestroy(subject, valuesName);
             });
         });
-    });
+        describe('output', () => {
+            beforeEach(async () => {
+                await checkInstall(subject);
+            });
+            afterEach(async () => {
+                await checkDestroy(subject, valuesName);
+            });
 
+            it('should return an existing output', async () => {
+                const result = await subject.output(moduleCfg, 'network_data');
+                result[0]['network_name'].should.eq('bridge');
+            });
+            it('should throw on unexisting output', async () => {
+                (async () => await subject.output(moduleCfg, 'unexisting')).should.throw;
+            });
+        });
+    });
     describe('static factory', () => {
         before(async () => {
             subjectFromFactory = await Terraform.createBare();
