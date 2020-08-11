@@ -141,10 +141,10 @@
     semver "^7.3.2"
     tsutils "^3.17.1"
 
-"@w3f/cmd@^0.3.0":
-  version "0.3.0"
-  resolved "https://registry.yarnpkg.com/@w3f/cmd/-/cmd-0.3.0.tgz#e2e84a8549c6fb11c6b5a3e373cea95ccb064f4e"
-  integrity sha512-TfStpc4L13Pc/rpQ29rv6Nc3BjSZ+S62PUb0VMV3ZCVC7qm8EMMuyQWzxeFW8jPRtfj8mspTdMP4EYRIKnUOWw==
+"@w3f/cmd@^0.4.0":
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/@w3f/cmd/-/cmd-0.4.0.tgz#bb410f8361e9c82b7fcad12c973da13dbaed4dbe"
+  integrity sha512-oAdDjSPEfysfthQEN356JzQDyPLM+fuxthkCeuJiGFPsw+OfVTkfVJK2drsa6kUykBx+MQWaGwvIMMbYlgFC9g==
   dependencies:
     "@w3f/logger" "^0.3.0"
 
@@ -336,13 +336,6 @@ camelcase@^5.0.0:
   version "5.3.1"
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-5.3.1.tgz#e3c9b31569e106811df242f715725a1f4c494320"
   integrity sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==
-
-chai-as-promised@^7.1.1:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/chai-as-promised/-/chai-as-promised-7.1.1.tgz#08645d825deb8696ee61725dbf590c012eb00ca0"
-  integrity sha512-azL6xMoi+uxu6z4rhWQ1jbdUhOMhis2PvscD/xjLqNMkv3BPPp2JyyuTHOrf9BOosGpNQ11v6BKv/g57RXbiaA==
-  dependencies:
-    check-error "^1.0.2"
 
 chai@^4.2.0:
   version "4.2.0"
