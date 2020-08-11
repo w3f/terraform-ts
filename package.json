@@ -2,7 +2,7 @@
   "name": "@w3f/terraform",
   "version": "0.2.0",
   "description": "Terraform manager",
-  "repository": "git@github.com:w3f/helm-ts.git",
+  "repository": "git@github.com:w3f/terraform-ts.git",
   "author": "W3F Infrastructure Team <devops@web3.foundation>",
   "license": "Apache-2.0",
   "main": "./dist/index.js",
