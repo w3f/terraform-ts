@@ -7,3 +7,4 @@ helmfile.d/.config
 helmfile.d/.kube
 **/.terraform
 **/*tfstate*
+.git/
